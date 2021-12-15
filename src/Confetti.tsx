@@ -167,7 +167,7 @@ export default class Confetti extends React.Component<ConfettiProps, any> {
         clock,
         image: confettiImages ? confettiImages[i % confettiImages.length] : undefined,
         confettiString: confettiStrings ? confettiStrings[i % confettiStrings.length] : undefined,
-        confettiStringSize: Math.floor(Math.random() * 10) + 12 // between 12-22
+        confettiStringSize: Math.floor(Math.random() * 25) + 12 // between 12-22
       };
     });
   }
