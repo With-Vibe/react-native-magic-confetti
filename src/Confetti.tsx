@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Dimensions, Image, ImageSourcePropType, StyleSheet, View } from 'react-native';
+import { Dimensions, Image, ImageSourcePropType, StyleSheet, View, Text } from 'react-native';
 import Animated from 'react-native-reanimated';
 
 export interface ConfettiProps {
@@ -8,7 +8,8 @@ export interface ConfettiProps {
   size: number;
   count: number;
   imageComponent?: React.ComponentClass<any, any>;
-  confettiImages: ImageSourcePropType[];
+  confettiImages?: ImageSourcePropType[];
+  confettiStrings?: string[];
   yspeed: number;
 }
 
@@ -25,6 +26,7 @@ interface ConfettiInfo {
   delay: Animated.Value<number>;
   clock: any;
   image: ImageSourcePropType;
+  confettiString: string;
 }
 
 export default class Confetti extends React.Component<ConfettiProps, any> {
@@ -55,7 +57,7 @@ export default class Confetti extends React.Component<ConfettiProps, any> {
     return (
       <View pointerEvents="none" style={style}>
         {this.confettis.map(
-          ({ key, x, y, angle, xVel, yVel, angleVel, color, elasticity, delay, clock, image }) => {
+          ({ key, x, y, angle, xVel, yVel, angleVel, color, elasticity, delay, clock, image, confettiString }) => {
             return (
               <React.Fragment key={key}>
                 <Animated.Code>
@@ -73,7 +75,7 @@ export default class Confetti extends React.Component<ConfettiProps, any> {
                       greaterThan,
                       lessThan,
                     } = Animated;
-                    const { width: screenWidth } = Dimensions.get('window');
+                    const { width: screenWidth } = Dimensions.get("window");
 
                     const timeDiff = diff(clock);
                     const dt = divide(timeDiff, 1000);
@@ -87,15 +89,22 @@ export default class Confetti extends React.Component<ConfettiProps, any> {
                         cond(
                           greaterThan(delay, 0),
                           [set(delay, sub(delay, dt))],
-                          [set(y, add(y, dy)), set(x, add(x, dx)), set(angle, add(angle, dAngle))],
+                          [
+                            set(y, add(y, dy)),
+                            set(x, add(x, dx)),
+                            set(angle, add(angle, dAngle)),
+                          ]
                         ),
                         cond(greaterThan(x, screenWidth - size), [
                           set(x, screenWidth - size),
                           set(xVel, multiply(xVel, -elasticity)),
                         ]),
-                        cond(lessThan(x, 0), [set(x, 0), set(xVel, multiply(xVel, -elasticity))]),
+                        cond(lessThan(x, 0), [
+                          set(x, 0),
+                          set(xVel, multiply(xVel, -elasticity)),
+                        ]),
                       ],
-                      [startClock(clock), timeDiff],
+                      [startClock(clock), timeDiff]
                     );
                   }}
                 </Animated.Code>
@@ -113,7 +122,18 @@ export default class Confetti extends React.Component<ConfettiProps, any> {
                     },
                   ]}
                 >
-                  <ImageComponent tintColor={color} source={image} style={this.confettiStyle} />
+                  {image && (
+                    <ImageComponent
+                      tintColor={color}
+                      source={image}
+                      style={this.confettiStyle}
+                    />
+                  )}
+                  {confettiString && (
+                    <Text style={[this.confettiStyle, { fontSize: 12, color }]}>
+                      {confettiString}
+                    </Text>
+                  )}
                 </Animated.View>
               </React.Fragment>
             );
@@ -124,7 +144,7 @@ export default class Confetti extends React.Component<ConfettiProps, any> {
   }
 
   private createConfettis() {
-    const { colors, size, count, confettiImages, yspeed } = this.props;
+    const { colors, size, count, confettiImages, confettiStrings, yspeed } = this.props;
     const { width: screenWidth } = Dimensions.get('screen');
 
     return [...new Array(count)].map((_, i) => {
@@ -144,7 +164,8 @@ export default class Confetti extends React.Component<ConfettiProps, any> {
         elasticity: Math.random() * 0.3 + 0.1,
         color: colors[i % colors.length],
         clock,
-        image: confettiImages[i % confettiImages.length],
+        image: confettiImages ? confettiImages[i % confettiImages.length] : undefined,
+        confettiString: confettiStrings ? confettiStrings[i % confettiStrings.length] : undefined
       };
     });
   }
