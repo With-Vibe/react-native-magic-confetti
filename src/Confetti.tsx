@@ -27,6 +27,7 @@ interface ConfettiInfo {
   clock: any;
   image: ImageSourcePropType;
   confettiString: string;
+  confettiStringSize: number;
 }
 
 export default class Confetti extends React.Component<ConfettiProps, any> {
@@ -57,8 +58,7 @@ export default class Confetti extends React.Component<ConfettiProps, any> {
     return (
       <View pointerEvents="none" style={style}>
         {this.confettis.map(
-          ({ key, x, y, angle, xVel, yVel, angleVel, color, elasticity, delay, clock, image, confettiString }) => {
-            const confettiStringSize = Math.floor(Math.random() * 10) + 12 // between 12-22
+          ({ key, x, y, angle, xVel, yVel, angleVel, color, elasticity, delay, clock, image, confettiString, confettiStringSize }) => {
             return (
               <React.Fragment key={key}>
                 <Animated.Code>
@@ -166,7 +166,8 @@ export default class Confetti extends React.Component<ConfettiProps, any> {
         color: colors[i % colors.length],
         clock,
         image: confettiImages ? confettiImages[i % confettiImages.length] : undefined,
-        confettiString: confettiStrings ? confettiStrings[i % confettiStrings.length] : undefined
+        confettiString: confettiStrings ? confettiStrings[i % confettiStrings.length] : undefined,
+        confettiStringSize: Math.floor(Math.random() * 10) + 12 // between 12-22
       };
     });
   }
