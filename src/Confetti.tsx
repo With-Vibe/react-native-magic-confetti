@@ -58,6 +58,7 @@ export default class Confetti extends React.Component<ConfettiProps, any> {
       <View pointerEvents="none" style={style}>
         {this.confettis.map(
           ({ key, x, y, angle, xVel, yVel, angleVel, color, elasticity, delay, clock, image, confettiString }) => {
+            const confettiStringSize = Math.floor(Math.random() * 10) + 12 // between 12-22
             return (
               <React.Fragment key={key}>
                 <Animated.Code>
@@ -130,7 +131,7 @@ export default class Confetti extends React.Component<ConfettiProps, any> {
                     />
                   )}
                   {confettiString && (
-                    <Text style={[this.confettiStyle, { fontSize: 12, color }]}>
+                    <Text style={[this.confettiStyle, { fontSize: confettiStringSize, color }]}>
                       {confettiString}
                     </Text>
                   )}
